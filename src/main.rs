@@ -16,8 +16,8 @@ struct Verse {
 impl Verse {
     const FACTOR: f32 = 0.16; // Verse text width is (FACTOR * screen width)%
     const INTERVAL: f64 = 0.001;
-    const STEP: i32 = 3;
-    const DURATION: f64 = 120.0;
+    const STEP: i32 = 2;
+    const DURATION: f64 = 15.0;
 
     fn new() -> Result<Verse, Error> {
         let max_verse_line_len = 40;
@@ -95,7 +95,7 @@ fn main() {
     label.set_markup(&verse.markup);
     container.put(&label, 0, 0);
     let eventbox = EventBox::new();
-    
+
     // Necessary to catch mouse movements and keyboard press
     eventbox.set_property("can-focus", true);
     eventbox.grab_focus();
