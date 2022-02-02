@@ -1,0 +1,13 @@
+[package]
+name = "e4biblesaver"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+easy_reader = "0.5"
+gtk = "0.15"
+gdk = "0.15"
+rand = "0.8"
+glib = "0.15"
+timer = "0.2.0"
+pango = "0.15"
