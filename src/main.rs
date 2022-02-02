@@ -121,6 +121,7 @@ fn main() {
     eventbox.add(&container);
     window.add(&eventbox);
     let mut duration: f64 = 0.0;
+    //0 seconds, 0.INTERVAL_seconds nanoseconds
     let interval = std::time::Duration::new(0, (Verse::INTERVAL * 1_000_000_000 as f64) as u32);
     // we are using a closure to capture the label (else we could also use a normal function)
     let update_verse = move || {
@@ -131,33 +132,27 @@ fn main() {
         layout.set_markup(&verse.markup);
         let (lw, lh) = layout.pixel_size();
         if verse.hdir == -1 {
+            if x <= 0 {
+                verse.hdir = 1;
+            }
             if verse.vdir == -1 {
-                if x <= 0 {
-                    verse.hdir = 1;
-                }
                 if y <= 0 {
                     verse.vdir = 1;
                 }
             } else {
-                if x <= 0 {
-                    verse.hdir = 1;
-                }
                 if y >= h - lh - Verse::STEP {
                     verse.vdir = -1;
                 }
             }
         } else {
+            if x >= w - lw  - Verse::STEP {
+                verse.hdir = -1;
+            }
             if verse.vdir == -1 {
-                if x >= w - lw  - Verse::STEP {
-                    verse.hdir = -1;
-                }
                 if y <= 0 {
                     verse.vdir = 1;
                 }
             } else {
-                if x >= w - lw - Verse::STEP {
-                    verse.hdir = -1;
-                }
                 if y >= h - lh - Verse::STEP {
                     verse.vdir = -1;
                 }
