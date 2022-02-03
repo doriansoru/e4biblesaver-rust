@@ -1,6 +1,4 @@
 use easy_reader::EasyReader;
-use gdk;
-use glib;
 use gtk::prelude::*;
 use gtk::{EventBox, Fixed, Label, Window, WindowType};
 use rand::Rng;
@@ -43,13 +41,13 @@ impl Verse {
         for word in cloned_verse.split_whitespace() {
             let count: usize = word.chars().count();
             if (i + count) > max_verse_line_len {
-                formatted_verse.push_str("\n");
+                formatted_verse.push('\n');
                 i = 0;
             } else {
                 i += count;
             }
             formatted_verse.push_str(word);
-            formatted_verse.push_str(" ");
+            formatted_verse.push(' ');
         }
         let screen = gdk::Screen::default().unwrap();
         let w = screen.width();
@@ -58,18 +56,18 @@ impl Verse {
         let mut rng = rand::thread_rng();
         let hdir: i32 = match rng.gen_range(0..2) {
             0 => -1,
-            1 | _ => 1,
+            _ => 1, // 1 included
         };
         let vdir: i32 = match rng.gen_range(0..2) {
             0 => -1,
-            1 | _ => 1,
+            _ => 1, // 1 included
         };
 
         let verse = Verse {
             text: formatted_verse,
             markup: verse_markup,
-            hdir: hdir,
-            vdir: vdir,
+            hdir,
+            vdir,
         };
         Ok(verse)
     }
@@ -122,7 +120,7 @@ fn main() {
     window.add(&eventbox);
     let mut duration: f64 = 0.0;
     //0 seconds, 0.INTERVAL_seconds nanoseconds
-    let interval = std::time::Duration::new(0, (Verse::INTERVAL * 1_000_000_000 as f64) as u32);
+    let interval = std::time::Duration::new(0, (Verse::INTERVAL * 1_000_000_000_f64) as u32);
     // we are using a closure to capture the label (else we could also use a normal function)
     let update_verse = move || {
         let x = label.allocation().x();
@@ -139,10 +137,8 @@ fn main() {
                 if y <= 0 {
                     verse.vdir = 1;
                 }
-            } else {
-                if y >= h - lh - Verse::STEP {
+            } else if y >= h - lh - Verse::STEP {
                     verse.vdir = -1;
-                }
             }
         } else {
             if x >= w - lw  - Verse::STEP {
@@ -152,10 +148,8 @@ fn main() {
                 if y <= 0 {
                     verse.vdir = 1;
                 }
-            } else {
-                if y >= h - lh - Verse::STEP {
+            } else if y >= h - lh - Verse::STEP {
                     verse.vdir = -1;
-                }
             }
         }
 
