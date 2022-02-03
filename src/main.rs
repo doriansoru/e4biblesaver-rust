@@ -137,8 +137,10 @@ fn main() {
                 if y <= 0 {
                     verse.vdir = 1;
                 }
-            } else if y >= h - lh - Verse::STEP {
+            } else if verse.vdir == 1 {
+                if y >= h - lh - Verse::STEP {
                     verse.vdir = -1;
+                }
             }
         } else {
             if x >= w - lw  - Verse::STEP {
@@ -148,8 +150,10 @@ fn main() {
                 if y <= 0 {
                     verse.vdir = 1;
                 }
-            } else if y >= h - lh - Verse::STEP {
+            } else if verse.vdir == 1 {
+                if y >= h - lh - Verse::STEP {
                     verse.vdir = -1;
+                }
             }
         }
 
