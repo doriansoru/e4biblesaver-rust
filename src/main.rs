@@ -18,7 +18,7 @@ impl Verse {
     const DURATION: f64 = 15.0;
     const BIBLE_SEPARATOR: &'static str = "|";
 
-    fn new() -> Result<Verse, Error> {
+    fn new() -> Result<Self, Error> {
         let max_verse_line_len = 40;
         let bible = File::open(include!("bible.h"))?;
         let mut reader = EasyReader::new(bible)?;
@@ -63,7 +63,7 @@ impl Verse {
             _ => 1, // 1 included
         };
 
-        let verse = Verse {
+        let verse = Self {
             text: formatted_verse,
             markup: verse_markup,
             hdir,
