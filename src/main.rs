@@ -16,15 +16,15 @@ impl Verse {
     const INTERVAL: f64 = 0.001;
     const STEP: i32 = 2;
     const DURATION: f64 = 15.0;
+    const BIBLE_SEPARATOR: &'static str = "|";
 
     fn new() -> Result<Verse, Error> {
         let max_verse_line_len = 40;
-        let separator = "|";
         let bible = File::open(include!("bible.h"))?;
         let mut reader = EasyReader::new(bible)?;
         //Select the verse
         let verse = reader.random_line()?.unwrap();
-        let fields: Vec<&str> = verse.split(separator).collect();
+        let fields: Vec<&str> = verse.split(Verse::BIBLE_SEPARATOR).collect();
         //fields[0] = book name; fields[1] = chapter number; fields[2] = verse number; fields[3] = verse text
         let mut formatted_verse: String = format!(
             "[{} {}:{}] {}",
@@ -74,10 +74,7 @@ impl Verse {
 }
 
 fn main() {
-    if gtk::init().is_err() {
-        //Initialize Gtk before doing anything with it
-        panic!("Can't init GTK");
-    }
+    assert!(!gtk::init().is_err(), "Can't init GTK");
 
     let screen = gdk::Screen::default().unwrap();
     let w = screen.width();
