@@ -1,8 +1,14 @@
-use easy_reader::EasyReader;
-use gtk::prelude::*;
-use gtk::{EventBox, Fixed, Label, Window, WindowType};
-use rand::Rng;
-use std::{fs::File, io::Error};
+mod prelude {
+    pub use std::path::PathBuf;
+    pub use easy_reader::EasyReader;
+    pub use gtk::prelude::*;
+    pub use gtk::{EventBox, Fixed, Label, Window, WindowType};
+    pub use rand::Rng;
+    pub use std::{fs::File, io::Error};    
+}
+
+use prelude::*;
+
 
 struct Verse {
     text: String,
@@ -20,7 +26,9 @@ impl Verse {
 
     fn new() -> Result<Self, Error> {
         let max_verse_line_len = 40;
-        let bible = File::open(include!("bible.h"))?;
+        let mut bible_path = PathBuf::new();
+        bible_path.push("bible/bible.txt");        
+        let bible = File::open(bible_path.to_str().unwrap())?;
         let mut reader = EasyReader::new(bible)?;
         //Select the verse
         let verse = reader.random_line()?.unwrap();

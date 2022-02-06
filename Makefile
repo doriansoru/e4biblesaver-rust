@@ -2,22 +2,16 @@ command := cargo
 flags := build --release
 build := $(command) $(flags)
 app := e4biblesaver
-install_dir := /opt/$(app)
-bible := $(install_dir)/bible.txt
-bin := /usr/bin
+bible := bible
+target := target/release
+home_dir := $(shell pwd)
 
-all: bible_h
+all:
 	$(build)
+	cp -R $(bible) $(target)
+	cd $(target) ; zip -9 -r $(home_dir)/$(app).zip ./$(app) ./$(bible)
+	cd $(home_dir)
+	@echo $(app).zip correctly built
 
-timestamp: timestamp.txt
-
-bible_h:
-	echo '"$(bible)"' > src/bible.h
-
-install:
-	sudo rm -rf $(install_dir)
-	sudo rm -f $(bin)/$(app)
-	sudo install -d $(install_dir)
-	sudo install target/release/e4biblesaver $(install_dir)/$(app)
-	sudo install bible.txt $(bible)
-	sudo ln -s $(install_dir)/$(app) $(bin)/$(app)
+clean:
+	$(command) clean
