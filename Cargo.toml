@@ -1,13 +1,27 @@
 [package]
 name = "e4biblesaver"
 version = "0.1.0"
+authors = ["Dorian Soru <doriansorud@gmail.com>"]
 edition = "2021"
 
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
 [dependencies]
-easy_reader = "0.5"
-gtk = "0.15"
-gdk = "0.15"
 rand = "0.8"
-glib = "0.15"
-timer = "0.2.0"
-pango = "0.15"
+x11 = "2"
+libc = { version = "0.2", default-features = false }
+
+[package.metadata.deb]
+maintainer = "Dorian Soru <doriansoru@gmail.com>"
+copyright = "2022, Dorian Soru <doriansoru@gmail.com>"
+license-file = [ "LICENSE", "0" ]
+extended-description = "A XScreenSaver module that shows a random verse from the holy Bible."
+depends = "$auto"
+section = "utility"
+priority = "optional"
+assets = [
+    [ "target/release/e4biblesaver", "/usr/libexec/xscreensaver/", "755" ],
+    [ "bible.txt", "opt/e4biblesaver/", "755" ],
+    [ "SwanseaBold.ttf", "opt/e4biblesaver/", "755" ],
+    [ "e4biblesaver.xml", "usr/share/xscreensaver/config/", "755" ],
+]
