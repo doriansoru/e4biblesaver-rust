@@ -22,6 +22,5 @@ priority = "optional"
 assets = [
     [ "target/release/e4biblesaver", "/usr/libexec/xscreensaver/", "755" ],
     [ "bible.txt", "opt/e4biblesaver/", "755" ],
-    [ "SwanseaBold.ttf", "opt/e4biblesaver/", "755" ],
     [ "e4biblesaver.xml", "usr/share/xscreensaver/config/", "755" ],
 ]

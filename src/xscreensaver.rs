@@ -204,11 +204,11 @@ impl ScreensaverSetup {
 
         for line in original_verse.lines() {
             unsafe {
-                x11::xft::XftGlyphExtents(
+                x11::xft::XftTextExtents16(
                     self.dpy,
                     xftfont,
-                    line.as_ptr() as *const _,
-                    line.len() as i32,
+                    line.trim().as_ptr() as *const _,
+                    line.trim().len() as i32,
                     &mut extents,
                 )
             };
@@ -223,7 +223,6 @@ impl ScreensaverSetup {
                 text_height = height as i32;
             }
         }
-
         text_height += step;
 
         let mut to_width = self.width - text_width;
@@ -243,7 +242,7 @@ impl ScreensaverSetup {
         let frame_interval = std::time::Duration::from_millis(self.speed);
         self.x = rng.gen_range(0..to_width);
         self.y = rng.gen_range(0..to_height);
-        while self.x > 0 {
+        while self.x > (text_width * -1) {
             // Write text to screen
             let mut i = 0;
             for line in original_verse.lines() {
