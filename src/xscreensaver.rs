@@ -5,10 +5,22 @@ use std::mem::MaybeUninit;
 use x11::{
     xft::{XftColor, XftDrawCreate, XftDrawStringUtf8, XftFontOpenName, XftTextExtents16},
     xlib::{
-        Display, Window, XBlackPixelOfScreen, XClearArea, XCreateGC, XCreateSimpleWindow,
-        XDefaultScreenOfDisplay, XFlush, XGetWindowAttributes, XMapWindow, XOpenDisplay,
-        XRootWindowOfScreen, XScreenCount, XSetForeground, XWhitePixelOfScreen, XWindowAttributes,
-        GC,
+        Display,
+        Window,
+        XBlackPixelOfScreen,
+        XClearArea,
+        XCreateGC,
+        XCreateSimpleWindow,
+        XDefaultScreenOfDisplay,
+        XFlush,
+        XGetWindowAttributes,
+        XMapWindow,
+        XOpenDisplay,
+        XRootWindowOfScreen,
+        XScreenCount,
+        XSetForeground,
+        XWhitePixelOfScreen,
+        XWindowAttributes,
     },
     xrender::{XGlyphInfo, XRenderColor},
 };
@@ -17,6 +29,7 @@ const SCROLL_STEP: i32 = 2;
 const FONTSIZE_FACTOR: f64 = 1000.0_f64;
 
 #[link(name = "X11")]
+#[link(name = "Xft")]
 extern "C" {}
 
 pub struct ScreensaverSetup {
@@ -24,8 +37,6 @@ pub struct ScreensaverSetup {
     root_window_id: Window,
     height: i32,
     width: i32,
-    graphics_context: GC,
-    black_graphics_context: GC,
     x: i32,
     y: i32,
     line_length: i32,
@@ -80,8 +91,6 @@ impl ScreensaverSetup {
                     root_window_id,
                     height: attrs2.height,
                     width: attrs2.width,
-                    graphics_context: g,
-                    black_graphics_context: g2,
                     x: -1,
                     y: -1,
                     line_length: line_length,
@@ -130,8 +139,6 @@ impl ScreensaverSetup {
                     root_window_id: win,
                     height: height as i32,
                     width: width as i32,
-                    graphics_context: g,
-                    black_graphics_context: g2,
                     x: -1,
                     y: -1,
                     line_length: line_length,
