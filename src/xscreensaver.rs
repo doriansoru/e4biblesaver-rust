@@ -225,13 +225,6 @@ impl ScreensaverSetup {
         }
         text_height += step;
 
-        let mut to_width = self.width - text_width;
-
-        if to_width < 0 || to_width > self.width {
-            // Set max x to 1/3 of the window
-            to_width = ((self.width / 3) as f64).round() as i32;
-        }
-
         let mut to_height = self.height - (text_height * original_verse.lines().count() as i32);
 
         if to_height < 0 || to_height > self.height {
@@ -240,7 +233,7 @@ impl ScreensaverSetup {
         }
 
         let frame_interval = std::time::Duration::from_millis(self.speed);
-        self.x = rng.gen_range(0..to_width);
+        self.x = self.width;
         self.y = rng.gen_range(0..to_height);
         while self.x > (text_width * -1) {
             // Write text to screen
