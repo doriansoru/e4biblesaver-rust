@@ -141,9 +141,9 @@ impl ScreensaverSetup {
         }
     }
 
-    pub fn clear(&mut self) {
+    pub fn clear(&mut self, w: i32, h: i32) {
         unsafe {
-            x11::xlib::XClearWindow(self.dpy, self.root_window_id);
+            x11::xlib::XClearArea(self.dpy, self.root_window_id, self.x, self.y, w as u32, h as u32, 0_i32);
         }
     }
 
@@ -263,7 +263,7 @@ impl ScreensaverSetup {
             unsafe { XFlush(self.dpy) };
             self.x -= SCROLL_STEP;
             std::thread::sleep(frame_interval);
-            self.clear();
+            self.clear(text_width, ((text_height + step) * original_verse.lines().count() as i32));
         }
     }
 }
