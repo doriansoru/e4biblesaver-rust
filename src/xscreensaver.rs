@@ -235,7 +235,7 @@ impl ScreensaverSetup {
         let frame_interval = std::time::Duration::from_millis(self.speed);
         self.x = self.width;
         self.y = rng.gen_range(0..to_height);
-        while self.x > (text_width * -1) {
+        while self.x > (text_width * -1)  {
             // Write text to screen
             let mut i = 0;
             for line in original_verse.lines() {
@@ -254,9 +254,9 @@ impl ScreensaverSetup {
             }
             // Flush everything
             unsafe { XFlush(self.dpy) };
-            self.x -= SCROLL_STEP;
             std::thread::sleep(frame_interval);
             self.clear(text_width, (text_height + step) * original_verse.lines().count() as i32);
+            self.x -= SCROLL_STEP;
         }
     }
 }
