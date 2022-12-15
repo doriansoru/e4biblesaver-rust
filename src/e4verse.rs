@@ -33,7 +33,7 @@ mod e4reader {
 }
 
 #[derive(Debug)]
-pub struct E4 {
+pub struct E4Verse {
     pub height: i32,
     pub width: i32,
     pub line_length: i32,
@@ -42,10 +42,10 @@ pub struct E4 {
     pub y: i32,
 }
 
-impl E4 {
+impl E4Verse {
     pub fn new(width: i32, height: i32, line_length: i32, bible_path: String) -> Self {
         let v = Self::new_verse(line_length, bible_path).unwrap();
-        let e4 = E4 {
+        let e4verse = Self {
             height: height,
             width: width,
             line_length: line_length,
@@ -53,7 +53,7 @@ impl E4 {
             x: 0,
             y: 0,
         };
-        e4
+        e4verse
     }
 
     // Gets a random line from a file and returns as a string
@@ -119,7 +119,7 @@ impl E4 {
     }
 }
 
-impl std::fmt::Display for E4 {
+impl std::fmt::Display for E4Verse {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", &self.verse)
     }

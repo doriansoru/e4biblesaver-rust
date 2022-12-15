@@ -1,4 +1,4 @@
-use crate::e4::E4;
+use crate::e4verse::E4Verse;
 use rand::Rng;
 use std::ffi::CString;
 use std::mem::MaybeUninit;
@@ -147,18 +147,18 @@ impl ScreensaverSetup {
         }
     }
 
-    pub fn draw_e4(&mut self) {
+    pub fn draw_e4verse(&mut self) {
         let step = 10;
 
         let mut rng = rand::thread_rng();
         // Get a verse
-        let e4 = E4::new(
+        let e4verse = E4Verse::new(
             self.width,
             self.height,
             self.line_length,
             self.bible_path.clone(),
         );
-        let original_verse = e4.verse.clone();
+        let original_verse = e4verse.verse.clone();
         let mut attrs = unsafe { std::mem::uninitialized() };
         unsafe {
             XGetWindowAttributes(self.dpy, self.root_window_id, &mut attrs);
@@ -263,7 +263,7 @@ impl ScreensaverSetup {
             unsafe { XFlush(self.dpy) };
             self.x -= SCROLL_STEP;
             std::thread::sleep(frame_interval);
-            self.clear(text_width, ((text_height + step) * original_verse.lines().count() as i32));
+            self.clear(text_width, (text_height + step) * original_verse.lines().count() as i32);
         }
     }
 }

@@ -1,5 +1,5 @@
-mod e4;
-use e4::E4;
+mod e4verse;
+use e4verse::E4Verse;
 use std::path::PathBuf;
 
 mod xscreensaver;
@@ -83,10 +83,10 @@ fn main() {
         speed.unwrap(),
     ) {
         loop {
-            s.draw_e4();
+            s.draw_e4verse();
         }
     } else {
-        let e4 = E4::new(80, 30, line_length.unwrap(), String::from(""));
-        println!("{}", e4);
+        let e4verse = E4Verse::new(80, 30, line_length.unwrap(), String::from(""));
+        println!("{}", e4verse);
     }
 }
