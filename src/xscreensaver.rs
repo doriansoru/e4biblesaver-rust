@@ -3,13 +3,14 @@ use rand::Rng;
 use std::ffi::CString;
 use std::mem::MaybeUninit;
 use x11::{
-    xft,
+    xft::{XftColor, XftDrawCreate, XftDrawStringUtf8, XftFontOpenName, XftTextExtents16},
     xlib::{
-        Display, Window, XBlackPixelOfScreen, XCreateGC, XCreateSimpleWindow,
-        XDefaultScreenOfDisplay, XFillRectangle, XFlush, XGetWindowAttributes, XMapWindow,
-        XOpenDisplay, XRootWindowOfScreen, XSetForeground, XWhitePixelOfScreen, XWindowAttributes,
+        Display, Window, XBlackPixelOfScreen, XClearArea, XCreateGC, XCreateSimpleWindow,
+        XDefaultScreenOfDisplay, XFlush, XGetWindowAttributes, XMapWindow, XOpenDisplay,
+        XRootWindowOfScreen, XScreenCount, XSetForeground, XWhitePixelOfScreen, XWindowAttributes,
         GC,
     },
+    xrender::{XGlyphInfo, XRenderColor},
 };
 
 const SCROLL_STEP: i32 = 2;
@@ -144,7 +145,15 @@ impl ScreensaverSetup {
 
     pub fn clear(&mut self, w: i32, h: i32) {
         unsafe {
-            x11::xlib::XClearArea(self.dpy, self.root_window_id, self.x, self.y, w as u32, h as u32, 0_i32);
+            XClearArea(
+                self.dpy,
+                self.root_window_id,
+                self.x,
+                self.y,
+                w as u32,
+                h as u32,
+                0_i32,
+            );
         }
     }
 
@@ -160,19 +169,20 @@ impl ScreensaverSetup {
             self.bible_path.clone(),
         );
         let original_verse = e4verse.verse.clone();
-        let mut attrs = unsafe { std::mem::uninitialized() };
+        let mut attrs = MaybeUninit::<XWindowAttributes>::uninit();
         unsafe {
-            XGetWindowAttributes(self.dpy, self.root_window_id, &mut attrs);
+            XGetWindowAttributes(self.dpy, self.root_window_id, attrs.as_mut_ptr());
         }
-        let win_ref = attrs.visual;
+        let attrs2 = unsafe { attrs.assume_init() };
+        let win_ref = attrs2.visual;
         let screen_ptr = unsafe { XDefaultScreenOfDisplay(self.dpy) };
         let colormap = unsafe { (*screen_ptr).cmap };
 
-        let draw = unsafe { xft::XftDrawCreate(self.dpy, self.root_window_id, win_ref, colormap) };
+        let draw = unsafe { XftDrawCreate(self.dpy, self.root_window_id, win_ref, colormap) };
 
-        let white = x11::xft::XftColor {
+        let white = XftColor {
             pixel: 0xFFFFFF, // Pixel value for white
-            color: x11::xrender::XRenderColor {
+            color: XRenderColor {
                 red: 65535,
                 green: 65535,
                 blue: 65535,
@@ -180,7 +190,7 @@ impl ScreensaverSetup {
             },
         };
 
-        let screen_count = unsafe { x11::xlib::XScreenCount(self.dpy) };
+        let screen_count = unsafe { XScreenCount(self.dpy) };
 
         if screen_count == 0 {
             // No screens for display...
@@ -189,9 +199,8 @@ impl ScreensaverSetup {
 
         let screen_num = 0;
         let font_name = CString::new(format!("Sans-{}", self.font_size)).unwrap();
-        let xftfont =
-            unsafe { x11::xft::XftFontOpenName(self.dpy, screen_num, font_name.as_ptr()) };
-        let mut extents = x11::xrender::XGlyphInfo {
+        let xftfont = unsafe { XftFontOpenName(self.dpy, screen_num, font_name.as_ptr()) };
+        let mut extents = XGlyphInfo {
             width: 0,
             height: 0,
             x: 0,
@@ -205,7 +214,7 @@ impl ScreensaverSetup {
 
         for line in original_verse.lines() {
             unsafe {
-                x11::xft::XftTextExtents16(
+                XftTextExtents16(
                     self.dpy,
                     xftfont,
                     line.trim().as_ptr() as *const _,
@@ -236,13 +245,13 @@ impl ScreensaverSetup {
         let frame_interval = std::time::Duration::from_millis(self.speed);
         self.x = self.width;
         self.y = rng.gen_range(0..to_height);
-        while self.x > (text_width * -1)  {
+        while self.x > (text_width * -1) {
             // Write text to screen
             let mut i = 0;
             for line in original_verse.lines() {
                 i += 1;
                 unsafe {
-                    x11::xft::XftDrawStringUtf8(
+                    XftDrawStringUtf8(
                         draw,
                         &white,
                         xftfont,
@@ -256,7 +265,10 @@ impl ScreensaverSetup {
             // Flush everything
             unsafe { XFlush(self.dpy) };
             std::thread::sleep(frame_interval);
-            self.clear(text_width, (text_height + step) * original_verse.lines().count() as i32);
+            self.clear(
+                text_width,
+                (text_height + step) * original_verse.lines().count() as i32,
+            );
             self.x -= SCROLL_STEP;
         }
     }
