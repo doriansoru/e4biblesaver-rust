@@ -14,7 +14,7 @@
 
   <number id="fontSize" type="slider" arg="-font-size %"
           _label="Font size" _low-label="Small" _high-label="Large"
-          low="1" high="3" default="2" />
+          low="20" high="40" default="30" />
 
   <file id="bible" _label="Bible file path" arg="-bible %"/>
 

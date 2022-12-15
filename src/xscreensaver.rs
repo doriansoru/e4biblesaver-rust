@@ -13,6 +13,7 @@ use x11::{
 };
 
 const SCROLL_STEP: i32 = 2;
+const FONTSIZE_FACTOR: f64 = 1000.0_f64;
 
 #[link(name = "X11")]
 extern "C" {}
@@ -71,7 +72,7 @@ impl ScreensaverSetup {
 
                 // Calculate the font size in percentual of the window size
                 let calculated_font_size: i32 =
-                    ((attrs2.width as f64) * font_size as f64 / 100.0_f64).round() as i32;
+                    ((attrs2.width as f64) * font_size as f64 / FONTSIZE_FACTOR).round() as i32;
 
                 Ok(ScreensaverSetup {
                     dpy,
@@ -121,7 +122,7 @@ impl ScreensaverSetup {
 
                 // Calculate the font size in percentual of the window size
                 let calculated_font_size: i32 =
-                    ((width as f64) * font_size as f64 / 100.0).round() as i32;
+                    ((width as f64) * font_size as f64 / FONTSIZE_FACTOR).round() as i32;
 
                 Ok(ScreensaverSetup {
                     dpy,
