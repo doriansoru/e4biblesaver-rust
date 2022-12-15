@@ -5,9 +5,9 @@ use std::path::PathBuf;
 mod xscreensaver;
 use xscreensaver::ScreensaverSetup;
 
-const DEFAULT_SPEED: u64 = 20;
+const DEFAULT_DURATION: u64 = 30;
 const DEFAULT_LINE_LENGTH: i32 = 40;
-const DEFAULT_FONT_SIZE: i32 = 30;
+const DEFAULT_FONT_SIZE: i32 = 15;
 
 use std::ffi::CString;
 use std::os::raw::c_char;
@@ -31,22 +31,22 @@ fn main() {
         .and_then(std::ffi::OsStr::to_str)
         .map(String::from)
         .unwrap();
-    let option_index_speed = args.clone().into_iter().position(|x| x == "-speed");
+    let option_index_duration = args.clone().into_iter().position(|x| x == "-duration");
     let option_index_line_length = args.clone().into_iter().position(|x| x == "-line-length");
     let option_index_font_size = args.clone().into_iter().position(|x| x == "-font-size");
     let option_index_bible = args.clone().into_iter().position(|x| x == "-bible");
 
-    let speed: Option<u64>;
+    let duration: Option<u64>;
     let line_length: Option<i32>;
     let font_size: Option<i32>;
     let bible_path: Option<String>;
 
     // Set default arguments if they are empty
-    if option_index_speed.is_some() {
-        let index = option_index_speed.unwrap();
-        speed = Some(args[index + 1].parse().unwrap());
+    if option_index_duration.is_some() {
+        let index = option_index_duration.unwrap();
+        duration = Some(args[index + 1].parse().unwrap());
     } else {
-        speed = Some(DEFAULT_SPEED);
+        duration = Some(DEFAULT_DURATION);
     }
 
     if option_index_line_length.is_some() {
@@ -80,7 +80,7 @@ fn main() {
         line_length.unwrap(),
         font_size.unwrap(),
         bible_path.unwrap(),
-        speed.unwrap(),
+        duration.unwrap(),
     ) {
         loop {
             s.draw_e4verse();

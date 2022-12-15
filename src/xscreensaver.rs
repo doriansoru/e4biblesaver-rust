@@ -12,8 +12,9 @@ use x11::{
     xrender::{XGlyphInfo, XRenderColor},
 };
 
-const SCROLL_STEP: i32 = 2;
+const SCROLL_STEP: i32 = 3;
 const FONTSIZE_FACTOR: f64 = 1000.0_f64;
+const FPS: u64 = 25;
 
 #[link(name = "X11")]
 #[link(name = "Xft")]
@@ -29,7 +30,7 @@ pub struct ScreensaverSetup {
     line_length: i32,
     font_size: i32,
     bible_path: String,
-    speed: u64,
+    duration: u64,
 }
 
 impl ScreensaverSetup {
@@ -83,7 +84,7 @@ impl ScreensaverSetup {
                     line_length: line_length,
                     font_size: calculated_font_size,
                     bible_path: bible_path,
-                    speed: speed,
+                    duration: speed,
                 })
             }
             None => {
@@ -131,7 +132,7 @@ impl ScreensaverSetup {
                     line_length: line_length,
                     font_size: calculated_font_size,
                     bible_path: bible_path,
-                    speed: speed,
+                    duration: speed,
                 })
             }
         }
@@ -156,7 +157,7 @@ impl ScreensaverSetup {
 
         let mut rng = rand::thread_rng();
         // Get a verse
-        let e4verse = E4Verse::new(
+        let mut e4verse = E4Verse::new(
             self.width,
             self.height,
             self.line_length,
@@ -229,17 +230,15 @@ impl ScreensaverSetup {
         }
         text_height += step;
 
-        let mut to_height = self.height - (text_height * original_verse.lines().count() as i32);
+        let verse_height = (text_height + step) * original_verse.lines().count() as i32;
 
-        if to_height < 0 || to_height > self.height {
-            // Set max y to 1/3 of the window
-            to_height = ((self.height / 3) as f64).round() as i32;
-        }
+        let frame_interval = std::time::Duration::from_millis(FPS);
+        self.x = rng.gen_range(0..text_width);
+        self.y = rng.gen_range(0..verse_height);
+        let now = std::time::SystemTime::now();
 
-        let frame_interval = std::time::Duration::from_millis(self.speed);
-        self.x = self.width;
-        self.y = rng.gen_range(0..to_height);
-        while self.x > (text_width * -1) {
+        //while self.x > (text_width * -1) {
+        while now.elapsed().unwrap().as_secs() < self.duration {
             // Write text to screen
             let mut i = 0;
             for line in original_verse.lines() {
@@ -261,9 +260,78 @@ impl ScreensaverSetup {
             std::thread::sleep(frame_interval);
             self.clear(
                 text_width,
-                (text_height + step) * original_verse.lines().count() as i32,
+                verse_height,
             );
-            self.x -= SCROLL_STEP;
+            match e4verse.direction {
+                crate::e4verse::Direction::TopLeft => {
+                    self.x -= SCROLL_STEP;
+                    self.y -= SCROLL_STEP;
+                    if self.x < 0 && self.y < 0 {
+                        e4verse.direction = rand::random();
+                        self.x = 0;
+                        self.y = 0;
+                    } else {
+                        if self.x < 0 {
+                            self.x = 0;
+                            e4verse.direction = crate::e4verse::Direction::TopRight;
+                        } else if self.y < 0 {
+                            self.y = 0;
+                            e4verse.direction = crate::e4verse::Direction::BottomLeft;
+                        }
+                    } 
+                },
+                crate::e4verse::Direction::TopRight => {
+                    self.x += SCROLL_STEP;
+                    self.y -= SCROLL_STEP;
+                    if (self.x + text_width) > self.width && self.y < 0 {
+                        self.x = self.width - text_width;
+                        self.y = 0;
+                        e4verse.direction = rand::random();
+                    } else {
+                        if (self.x + text_width) > self.width {
+                            self.x = self.width - text_width;
+                            e4verse.direction = crate::e4verse::Direction::TopLeft;
+                        } else if self.y < 0 {
+                            self.y = 0;
+                            e4verse.direction = crate::e4verse::Direction::BottomRight;
+                        }
+                    }                     
+                },
+                crate::e4verse::Direction::BottomRight => {
+                    self.x += SCROLL_STEP;
+                    self.y += SCROLL_STEP;
+                    if (self.x + text_width) > self.width && (self.y + verse_height) > self.height {
+                        self.x = self.width - text_height;
+                        self.y = self.height - verse_height;
+                        e4verse.direction = rand::random();
+                    } else {
+                        if (self.x + text_width) > self.width {
+                            self.x = self.width - text_width;
+                            e4verse.direction = crate::e4verse::Direction::BottomLeft;
+                        } else if (self.y + verse_height) > self.height {
+                            self.y = self.height - verse_height;
+                            e4verse.direction = crate::e4verse::Direction::TopRight;
+                        }
+                    } 
+                },
+                crate::e4verse::Direction::BottomLeft => {
+                    self.x -= SCROLL_STEP;
+                    self.y += SCROLL_STEP;
+                    if self.x < 0 && (self.y + verse_height) > self.height {
+                        self.x = 0;
+                        self.y = self.height - verse_height;
+                        e4verse.direction = rand::random();
+                    } else {
+                        if self.x < 0 {
+                            self.x = 0;
+                            e4verse.direction = crate::e4verse::Direction::BottomRight;
+                        } else if (self.y + verse_height) > self.height {
+                            self.y = self.height - verse_height;
+                            e4verse.direction = crate::e4verse::Direction::TopLeft;
+                        }
+                    }                     
+                },
+            }
         }
     }
 }

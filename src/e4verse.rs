@@ -1,4 +1,8 @@
 use std::io::Error;
+use rand::{
+    distributions::{Distribution, Standard},
+    Rng,
+};
 
 mod e4reader {
     use std::{
@@ -40,7 +44,29 @@ pub struct E4Verse {
     pub verse: String,
     pub x: i32,
     pub y: i32,
+    pub direction: Direction,
 }
+
+#[derive(Debug)]
+pub enum Direction {
+    TopLeft,
+    TopRight,
+    BottomRight,
+    BottomLeft,
+}
+
+impl Distribution<Direction> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Direction {
+        // match rng.gen_range(0, 3) { // rand 0.5, 0.6, 0.7
+        match rng.gen_range(0..4) { // rand 0.8
+            0 => Direction::TopLeft,
+            1 => Direction::TopRight,
+            2 => Direction::BottomRight,
+            _ => Direction::BottomLeft,
+        }
+    }
+}
+
 
 impl E4Verse {
     pub fn new(width: i32, height: i32, line_length: i32, bible_path: String) -> Self {
@@ -52,6 +78,7 @@ impl E4Verse {
             verse: v,
             x: 0,
             y: 0,
+            direction: rand::random(),
         };
         e4verse
     }
