@@ -143,13 +143,13 @@ impl ScreensaverSetup {
 
     pub fn clear(&mut self, w: i32, h: i32) {
         // Boundary, in pixels, added to each coordinate
-        let boundary: u32 = 50; 
+        let boundary: u32 = 100; 
         unsafe {
             XClearArea(
                 self.dpy,
                 self.root_window_id,
-                self.x - boundary as i32,
-                self.y - boundary as i32,
+                self.x,
+                self.y,
                 w as u32 + boundary,
                 h as u32 + boundary,
                 0_i32,
