@@ -258,10 +258,7 @@ impl ScreensaverSetup {
             // Flush everything
             unsafe { XFlush(self.dpy) };
             std::thread::sleep(frame_interval);
-            self.clear(
-                text_width,
-                verse_height,
-            );
+            self.clear(text_width, verse_height);
             match e4verse.direction {
                 crate::e4verse::Direction::TopLeft => {
                     self.x -= SCROLL_STEP;
@@ -278,8 +275,8 @@ impl ScreensaverSetup {
                             self.y = 0;
                             e4verse.direction = crate::e4verse::Direction::BottomLeft;
                         }
-                    } 
-                },
+                    }
+                }
                 crate::e4verse::Direction::TopRight => {
                     self.x += SCROLL_STEP;
                     self.y -= SCROLL_STEP;
@@ -295,8 +292,8 @@ impl ScreensaverSetup {
                             self.y = 0;
                             e4verse.direction = crate::e4verse::Direction::BottomRight;
                         }
-                    }                     
-                },
+                    }
+                }
                 crate::e4verse::Direction::BottomRight => {
                     self.x += SCROLL_STEP;
                     self.y += SCROLL_STEP;
@@ -312,8 +309,8 @@ impl ScreensaverSetup {
                             self.y = self.height - verse_height;
                             e4verse.direction = crate::e4verse::Direction::TopRight;
                         }
-                    } 
-                },
+                    }
+                }
                 crate::e4verse::Direction::BottomLeft => {
                     self.x -= SCROLL_STEP;
                     self.y += SCROLL_STEP;
@@ -329,8 +326,8 @@ impl ScreensaverSetup {
                             self.y = self.height - verse_height;
                             e4verse.direction = crate::e4verse::Direction::TopLeft;
                         }
-                    }                     
-                },
+                    }
+                }
             }
         }
     }
