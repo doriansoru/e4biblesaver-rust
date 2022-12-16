@@ -75,7 +75,8 @@ impl ScreensaverSetup {
                 }
 
                 // Calculate the font size in percentual of the window size
-                let calculated_font_size: i32 = Self::calculate_font_size(attrs2.width as f64, font_size as f64);
+                let calculated_font_size: i32 =
+                    Self::calculate_font_size(attrs2.width as f64, font_size as f64);
 
                 Ok(ScreensaverSetup {
                     dpy,
@@ -122,7 +123,8 @@ impl ScreensaverSetup {
                 }
 
                 // Calculate the font size in percentual of the window size
-                let calculated_font_size: i32 = Self::calculate_font_size(width as f64, font_size as f64);
+                let calculated_font_size: i32 =
+                    Self::calculate_font_size(width as f64, font_size as f64);
                 Ok(ScreensaverSetup {
                     dpy,
                     root_window_id: win,
@@ -140,14 +142,16 @@ impl ScreensaverSetup {
     }
 
     pub fn clear(&mut self, w: i32, h: i32) {
+        // Boundary, in pixels, added to each coordinate
+        let boundary: u32 = 50; 
         unsafe {
             XClearArea(
                 self.dpy,
                 self.root_window_id,
-                self.x,
-                self.y,
-                w as u32,
-                h as u32,
+                self.x - boundary as i32,
+                self.y - boundary as i32,
+                w as u32 + boundary,
+                h as u32 + boundary,
                 0_i32,
             );
         }
