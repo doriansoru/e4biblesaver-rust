@@ -258,7 +258,7 @@ impl ScreensaverSetup {
             // Flush everything
             unsafe { XFlush(self.dpy) };
             std::thread::sleep(frame_interval);
-            self.clear(text_width, verse_height);
+            self.clear(text_width + step, verse_height);
             match e4verse.direction {
                 crate::e4verse::Direction::TopLeft => {
                     self.x -= SCROLL_STEP;
