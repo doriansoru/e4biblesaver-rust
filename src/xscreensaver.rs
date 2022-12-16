@@ -13,7 +13,7 @@ use x11::{
 };
 
 const SCROLL_STEP: i32 = 3;
-const FONTSIZE_FACTOR: f64 = 1000.0_f64;
+const FONTSIZE_FACTOR: f64 = 10.0_f64;
 const FPS: u64 = 20;
 
 #[link(name = "X11")]
@@ -72,7 +72,7 @@ impl ScreensaverSetup {
 
                 // Calculate the font size in percentual of the window size
                 let calculated_font_size: i32 =
-                    ((attrs2.width as f64) * font_size as f64 / FONTSIZE_FACTOR).round() as i32;
+                    ((attrs2.width as f64) / font_size as f64 / FONTSIZE_FACTOR).round() as i32;
 
                 Ok(ScreensaverSetup {
                     dpy,
@@ -230,7 +230,7 @@ impl ScreensaverSetup {
         }
         text_height += step;
 
-        let verse_height = (text_height + step) * original_verse.lines().count() as i32;
+        let verse_height = (text_height + step) * original_verse.lines().count() as i32 + step;
 
         let frame_interval = std::time::Duration::from_millis(FPS);
         self.x = rng.gen_range(0..text_width);

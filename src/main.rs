@@ -7,7 +7,7 @@ use xscreensaver::ScreensaverSetup;
 
 const DEFAULT_DURATION: u64 = 30;
 const DEFAULT_LINE_LENGTH: i32 = 40;
-const DEFAULT_FONT_SIZE: i32 = 15;
+const DEFAULT_FONT_SIZE: i32 = 5;
 
 use std::ffi::CString;
 use std::os::raw::c_char;
