@@ -34,6 +34,10 @@ pub struct ScreensaverSetup {
 }
 
 impl ScreensaverSetup {
+    fn calculate_font_size(w: f64, font_size: f64) -> i32 {
+        (w / font_size / FONTSIZE_FACTOR).round() as i32
+    }
+
     pub fn new(
         line_length: i32,
         font_size: i32,
@@ -71,8 +75,7 @@ impl ScreensaverSetup {
                 }
 
                 // Calculate the font size in percentual of the window size
-                let calculated_font_size: i32 =
-                    ((attrs2.width as f64) / font_size as f64 / FONTSIZE_FACTOR).round() as i32;
+                let calculated_font_size: i32 = Self::calculate_font_size(attrs2.width as f64, font_size as f64);
 
                 Ok(ScreensaverSetup {
                     dpy,
@@ -119,9 +122,7 @@ impl ScreensaverSetup {
                 }
 
                 // Calculate the font size in percentual of the window size
-                let calculated_font_size: i32 =
-                    ((width as f64) * font_size as f64 / FONTSIZE_FACTOR).round() as i32;
-
+                let calculated_font_size: i32 = Self::calculate_font_size(width as f64, font_size as f64);
                 Ok(ScreensaverSetup {
                     dpy,
                     root_window_id: win,
@@ -164,6 +165,7 @@ impl ScreensaverSetup {
             self.bible_path.clone(),
         );
         let original_verse = e4verse.verse.clone();
+
         let mut attrs = MaybeUninit::<XWindowAttributes>::uninit();
         unsafe {
             XGetWindowAttributes(self.dpy, self.root_window_id, attrs.as_mut_ptr());
@@ -230,7 +232,7 @@ impl ScreensaverSetup {
         }
         text_height += step;
 
-        let verse_height = (text_height + step) * original_verse.lines().count() as i32 + step;
+        let verse_height = (text_height + step) * original_verse.lines().count() as i32;
 
         let frame_interval = std::time::Duration::from_millis(FPS);
         self.x = rng.gen_range(0..text_width);
