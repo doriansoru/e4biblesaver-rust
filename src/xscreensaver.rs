@@ -3,7 +3,7 @@ use rand::Rng;
 use std::ffi::CString;
 use std::mem::MaybeUninit;
 use x11::{
-    xft::{XftColor, XftDrawCreate, XftDrawStringUtf8, XftFontOpenName, XftTextExtents16},
+    xft::{XftColor, XftDrawCreate, XftDrawStringUtf8, XftFontOpenName, XftTextExtentsUtf8},
     xlib::{
         Display, Window, XBlackPixelOfScreen, XClearArea, XCreateGC, XCreateSimpleWindow,
         XDefaultScreenOfDisplay, XFlush, XGetWindowAttributes, XMapWindow, XOpenDisplay,
@@ -14,7 +14,7 @@ use x11::{
 
 const SCROLL_STEP: i32 = 3;
 const FONTSIZE_FACTOR: f64 = 1000.0_f64;
-const FPS: u64 = 25;
+const FPS: u64 = 20;
 
 #[link(name = "X11")]
 #[link(name = "Xft")]
@@ -153,7 +153,7 @@ impl ScreensaverSetup {
     }
 
     pub fn draw_e4verse(&mut self) {
-        let step = 10;
+        let step = 5;
 
         let mut rng = rand::thread_rng();
         // Get a verse
@@ -209,11 +209,11 @@ impl ScreensaverSetup {
 
         for line in original_verse.lines() {
             unsafe {
-                XftTextExtents16(
+                XftTextExtentsUtf8(
                     self.dpy,
                     xftfont,
-                    line.trim().as_ptr() as *const _,
-                    line.trim().len() as i32,
+                    line.as_ptr() as *const _,
+                    line.len() as i32,
                     &mut extents,
                 )
             };
