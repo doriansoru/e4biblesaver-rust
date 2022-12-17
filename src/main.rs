@@ -1,9 +1,9 @@
-mod e4verse;
-use e4verse::E4Verse;
+mod bibleverse;
+use bibleverse::BibleVerse;
 use std::path::PathBuf;
 
-mod xscreensaver;
-use xscreensaver::ScreensaverSetup;
+mod biblescreensaver;
+use biblescreensaver::ScreensaverSetup;
 
 const DEFAULT_DURATION: u64 = 30;
 const DEFAULT_LINE_LENGTH: i32 = 40;
@@ -86,7 +86,7 @@ fn main() {
             s.draw_e4verse();
         }
     } else {
-        let e4verse = E4Verse::new(80, 30, line_length.unwrap(), String::from(""));
+        let e4verse = BibleVerse::new(80, 30, line_length.unwrap(), String::from(""));
         println!("{}", e4verse);
     }
 }

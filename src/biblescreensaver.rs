@@ -1,4 +1,4 @@
-use crate::e4verse::E4Verse;
+use crate::bibleverse::BibleVerse;
 use rand::Rng;
 use std::ffi::CString;
 use std::mem::MaybeUninit;
@@ -14,7 +14,7 @@ use x11::{
 
 const SCROLL_STEP: i32 = 3;
 const FONTSIZE_FACTOR: f64 = 10.0_f64;
-const FPS: u64 = 20;
+const FPS: u64 = 50;
 
 #[link(name = "X11")]
 #[link(name = "Xft")]
@@ -143,7 +143,7 @@ impl ScreensaverSetup {
 
     pub fn clear(&mut self, w: i32, h: i32) {
         // Boundary, in pixels, added to each coordinate
-        let boundary: u32 = (self.width as f64 / 40.0_f64).round() as u32; 
+        let boundary: u32 = (self.width as f64 / 40.0_f64).round() as u32;
         unsafe {
             XClearArea(
                 self.dpy,
@@ -162,7 +162,7 @@ impl ScreensaverSetup {
 
         let mut rng = rand::thread_rng();
         // Get a verse
-        let mut e4verse = E4Verse::new(
+        let mut e4verse = BibleVerse::new(
             self.width,
             self.height,
             self.line_length,
@@ -239,6 +239,7 @@ impl ScreensaverSetup {
         let verse_height = (text_height + step) * original_verse.lines().count() as i32;
 
         let frame_interval = std::time::Duration::from_millis(FPS);
+
         self.x = rng.gen_range(0..text_width);
         self.y = rng.gen_range(0..verse_height);
         let now = std::time::SystemTime::now();
@@ -266,9 +267,10 @@ impl ScreensaverSetup {
             std::thread::sleep(frame_interval);
             self.clear(text_width + step, verse_height);
             match e4verse.direction {
-                crate::e4verse::Direction::TopLeft => {
+                crate::bibleverse::Direction::TopLeft => {
                     self.x -= SCROLL_STEP;
                     self.y -= SCROLL_STEP;
+
                     if self.x < 0 && self.y < 0 {
                         e4verse.direction = rand::random();
                         self.x = 0;
@@ -276,14 +278,14 @@ impl ScreensaverSetup {
                     } else {
                         if self.x < 0 {
                             self.x = 0;
-                            e4verse.direction = crate::e4verse::Direction::TopRight;
+                            e4verse.direction = crate::bibleverse::Direction::TopRight;
                         } else if self.y < 0 {
                             self.y = 0;
-                            e4verse.direction = crate::e4verse::Direction::BottomLeft;
+                            e4verse.direction = crate::bibleverse::Direction::BottomLeft;
                         }
                     }
                 }
-                crate::e4verse::Direction::TopRight => {
+                crate::bibleverse::Direction::TopRight => {
                     self.x += SCROLL_STEP;
                     self.y -= SCROLL_STEP;
                     if (self.x + text_width) > self.width && self.y < 0 {
@@ -293,14 +295,14 @@ impl ScreensaverSetup {
                     } else {
                         if (self.x + text_width) > self.width {
                             self.x = self.width - text_width;
-                            e4verse.direction = crate::e4verse::Direction::TopLeft;
+                            e4verse.direction = crate::bibleverse::Direction::TopLeft;
                         } else if self.y < 0 {
                             self.y = 0;
-                            e4verse.direction = crate::e4verse::Direction::BottomRight;
+                            e4verse.direction = crate::bibleverse::Direction::BottomRight;
                         }
                     }
                 }
-                crate::e4verse::Direction::BottomRight => {
+                crate::bibleverse::Direction::BottomRight => {
                     self.x += SCROLL_STEP;
                     self.y += SCROLL_STEP;
                     if (self.x + text_width) > self.width && (self.y + verse_height) > self.height {
@@ -310,14 +312,14 @@ impl ScreensaverSetup {
                     } else {
                         if (self.x + text_width) > self.width {
                             self.x = self.width - text_width;
-                            e4verse.direction = crate::e4verse::Direction::BottomLeft;
+                            e4verse.direction = crate::bibleverse::Direction::BottomLeft;
                         } else if (self.y + verse_height) > self.height {
                             self.y = self.height - verse_height;
-                            e4verse.direction = crate::e4verse::Direction::TopRight;
+                            e4verse.direction = crate::bibleverse::Direction::TopRight;
                         }
                     }
                 }
-                crate::e4verse::Direction::BottomLeft => {
+                crate::bibleverse::Direction::BottomLeft => {
                     self.x -= SCROLL_STEP;
                     self.y += SCROLL_STEP;
                     if self.x < 0 && (self.y + verse_height) > self.height {
@@ -327,10 +329,10 @@ impl ScreensaverSetup {
                     } else {
                         if self.x < 0 {
                             self.x = 0;
-                            e4verse.direction = crate::e4verse::Direction::BottomRight;
+                            e4verse.direction = crate::bibleverse::Direction::BottomRight;
                         } else if (self.y + verse_height) > self.height {
                             self.y = self.height - verse_height;
-                            e4verse.direction = crate::e4verse::Direction::TopLeft;
+                            e4verse.direction = crate::bibleverse::Direction::TopLeft;
                         }
                     }
                 }

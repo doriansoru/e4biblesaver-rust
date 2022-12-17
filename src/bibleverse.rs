@@ -4,7 +4,7 @@ use rand::{
 };
 use std::io::Error;
 
-mod e4reader {
+mod versereader {
     use std::{
         fs::File,
         io::{self, prelude::*},
@@ -37,7 +37,7 @@ mod e4reader {
 }
 
 #[derive(Debug)]
-pub struct E4Verse {
+pub struct BibleVerse {
     pub height: i32,
     pub width: i32,
     pub line_length: i32,
@@ -68,7 +68,7 @@ impl Distribution<Direction> for Standard {
     }
 }
 
-impl E4Verse {
+impl BibleVerse {
     pub fn new(width: i32, height: i32, line_length: i32, bible_path: String) -> Self {
         let v = Self::new_verse(line_length, bible_path).unwrap();
         let e4verse = Self {
@@ -86,7 +86,7 @@ impl E4Verse {
     // Gets a random line from a file and returns as a string
     fn get_random_line(bible_path: &String) -> String {
         // Create a file buffer reader
-        let mut reader = e4reader::BufReader::open(bible_path).unwrap();
+        let mut reader = versereader::BufReader::open(bible_path).unwrap();
 
         // Initializes the reservoir with a random line from the file
         let mut reservoir: Vec<String> = Vec::new();
@@ -146,7 +146,7 @@ impl E4Verse {
     }
 }
 
-impl std::fmt::Display for E4Verse {
+impl std::fmt::Display for BibleVerse {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", &self.verse)
     }
