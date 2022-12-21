@@ -49,10 +49,10 @@ pub struct BibleVerse {
 
 #[derive(Debug)]
 pub enum Direction {
-    TopLeft,
-    TopRight,
-    BottomRight,
-    BottomLeft,
+    NorthWest,
+    NorthEeast,
+    SouthEeast,
+    SouthWest,
 }
 
 impl Distribution<Direction> for Standard {
@@ -60,10 +60,10 @@ impl Distribution<Direction> for Standard {
         // match rng.gen_range(0, 3) { // rand 0.5, 0.6, 0.7
         match rng.gen_range(0..4) {
             // rand 0.8
-            0 => Direction::TopLeft,
-            1 => Direction::TopRight,
-            2 => Direction::BottomRight,
-            _ => Direction::BottomLeft,
+            0 => Direction::NorthWest,
+            1 => Direction::NorthEeast,
+            2 => Direction::SouthEeast,
+            _ => Direction::SouthWest,
         }
     }
 }
