@@ -7,13 +7,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "0.8"
+rand = "0.9"
 x11 = "2"
 libc = { version = "0.2", default-features = false }
 
 [package.metadata.deb]
 maintainer = "Dorian Soru <doriansoru@gmail.com>"
-copyright = "2022, Dorian Soru <doriansoru@gmail.com>"
+copyright = "2024, Dorian Soru <doriansoru@gmail.com>"
 license-file = [ "LICENSE", "0" ]
 extended-description = "A XScreenSaver module that shows a random verse from the holy Bible."
 depends = "$auto"

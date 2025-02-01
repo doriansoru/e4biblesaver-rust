@@ -1,9 +1,17 @@
+ifeq ($(shell which xscreensaver),)
+$(error xscreensaver is not installted. Install xscreensaver and try again.)
+endif
+
+ifeq ($(shell which cargo),)
+$(error cargo is not installted. Install cargo and try again.)
+endif
+
 command := cargo
 flags := build --release
 build := $(command) $(flags)
 app := e4biblesaver
 target := target/release
-install_dir := $(shell dirname $$(find /usr -name "anemone" 2>/dev/null))
+install_dir := $(shell dirname $$(find /usr -name "abstractile" 2>/dev/null))
 xconfig_dir := /usr/share/xscreensaver/config
 setting := "-	\\t\\t\\t $(app) -root \\t\\t\\t\\\n\\"
 config_dir := /opt/$(app)

@@ -1,4 +1,5 @@
 use crate::bibleverse::BibleVerse;
+use crate::bibleverse::Direction;
 use rand::Rng;
 use std::ffi::CString;
 use std::mem::MaybeUninit;
@@ -15,11 +16,11 @@ use x11::{
 // Move the verse of n pixels at each update
 const FLUTTUATION_SIZE: i32 = 3;
 
-// The real font size in pixels will be screen_width / FONTSIZE_FACTOR / give setting font width 
-const FONTSIZE_FACTOR: f64 = 10.0_f64; 
+// The real font size in pixels will be screen_width / FONTSIZE_FACTOR / give setting font width
+const FONTSIZE_FACTOR: f64 = 10.0_f64;
 
 // Update the verse each n milliseconds
-const FPS: u64 = 50; 
+const FPS: u64 = 50;
 
 #[link(name = "X11")]
 #[link(name = "Xft")]
@@ -165,7 +166,7 @@ impl ScreensaverSetup {
     pub fn draw_e4verse(&mut self) {
         let step = 5;
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         // Get a verse
         let mut e4verse = BibleVerse::new(
             self.width,
@@ -245,8 +246,8 @@ impl ScreensaverSetup {
 
         let frame_interval = std::time::Duration::from_millis(FPS);
 
-        self.verse_x = rng.gen_range(0..text_width);
-        self.verse_y = rng.gen_range(0..verse_height);
+        self.verse_x = rng.random_range(0..text_width);
+        self.verse_y = rng.random_range(0..verse_height);
         let now = std::time::SystemTime::now();
 
         //while self.x > (text_width * -1) {
@@ -275,9 +276,11 @@ impl ScreensaverSetup {
                 crate::bibleverse::Direction::NorthWest => {
                     self.verse_x -= FLUTTUATION_SIZE;
                     self.verse_y -= FLUTTUATION_SIZE;
+                    let index = rand::rng().random_range(0..=Direction::max());
+                    let direction = Direction::from(index);
 
                     if self.verse_x < 0 && self.verse_y < 0 {
-                        e4verse.direction = rand::random();
+                        e4verse.direction = direction;
                         self.verse_x = 0;
                         self.verse_y = 0;
                     } else {
@@ -293,10 +296,13 @@ impl ScreensaverSetup {
                 crate::bibleverse::Direction::NorthEeast => {
                     self.verse_x += FLUTTUATION_SIZE;
                     self.verse_y -= FLUTTUATION_SIZE;
+                    let index = rand::rng().random_range(0..=Direction::max());
+                    let direction = Direction::from(index);
+
                     if (self.verse_x + text_width) > self.width && self.verse_y < 0 {
                         self.verse_x = self.width - text_width;
                         self.verse_y = 0;
-                        e4verse.direction = rand::random();
+                        e4verse.direction = direction;
                     } else {
                         if (self.verse_x + text_width) > self.width {
                             self.verse_x = self.width - text_width;
@@ -310,10 +316,13 @@ impl ScreensaverSetup {
                 crate::bibleverse::Direction::SouthEeast => {
                     self.verse_x += FLUTTUATION_SIZE;
                     self.verse_y += FLUTTUATION_SIZE;
+                    let index = rand::rng().random_range(0..=Direction::max());
+                    let direction = Direction::from(index);
+
                     if (self.verse_x + text_width) > self.width && (self.verse_y + verse_height) > self.height {
                         self.verse_x = self.width - text_height;
                         self.verse_y = self.height - verse_height;
-                        e4verse.direction = rand::random();
+                        e4verse.direction = direction;
                     } else {
                         if (self.verse_x + text_width) > self.width {
                             self.verse_x = self.width - text_width;
@@ -327,10 +336,13 @@ impl ScreensaverSetup {
                 crate::bibleverse::Direction::SouthWest => {
                     self.verse_x -= FLUTTUATION_SIZE;
                     self.verse_y += FLUTTUATION_SIZE;
+                    let index = rand::rng().random_range(0..=Direction::max());
+                    let direction = Direction::from(index);
+
                     if self.verse_x < 0 && (self.verse_y + verse_height) > self.height {
                         self.verse_x = 0;
                         self.verse_y = self.height - verse_height;
-                        e4verse.direction = rand::random();
+                        e4verse.direction = direction;
                     } else {
                         if self.verse_x < 0 {
                             self.verse_x = 0;

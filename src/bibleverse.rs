@@ -1,5 +1,4 @@
 use rand::{
-    distributions::{Distribution, Standard},
     Rng,
 };
 use std::io::Error;
@@ -55,15 +54,21 @@ pub enum Direction {
     SouthWest,
 }
 
-impl Distribution<Direction> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Direction {
-        // match rng.gen_range(0, 3) { // rand 0.5, 0.6, 0.7
-        match rng.gen_range(0..4) {
-            // rand 0.8
+impl Direction {
+   /// Return the last item index
+   pub fn max() -> i8 {
+       3
+   }
+}
+
+impl From<i8> for Direction {
+    fn from(index: i8) -> Self {
+        match index {
             0 => Direction::NorthWest,
             1 => Direction::NorthEeast,
             2 => Direction::SouthEeast,
-            _ => Direction::SouthWest,
+            3 => Direction::SouthWest,
+            _ => panic!("Invalid index")
         }
     }
 }
@@ -71,6 +76,9 @@ impl Distribution<Direction> for Standard {
 impl BibleVerse {
     pub fn new(width: i32, height: i32, line_length: i32, bible_path: String) -> Self {
         let v = Self::new_verse(line_length, bible_path).unwrap();
+
+        let index = rand::rng().random_range(0..=Direction::max());
+        let direction = Direction::from(index);
         let e4verse = Self {
             height: height,
             width: width,
@@ -78,7 +86,7 @@ impl BibleVerse {
             verse: v,
             x: 0,
             y: 0,
-            direction: rand::random(),
+            direction,
         };
         e4verse
     }
@@ -99,14 +107,14 @@ impl BibleVerse {
         let mut n = 1;
         while let Some(line) = reader.read_line(&mut buffer) {
             n += 1;
-            let random_index = rand::random::<usize>() % n;
+            let random_index = (rand::random::<i8>() as usize) % n;
             if random_index < reservoir.len() {
                 reservoir[random_index] = line.unwrap().to_string();
             }
         }
 
         // Returns one random line from the reservoir
-        let random_index = rand::random::<usize>() % reservoir.len();
+        let random_index = (rand::random::<i8>() as usize) % reservoir.len();
         reservoir[random_index].clone()
     }
 
