@@ -52,7 +52,7 @@ impl ScreensaverSetup {
     ) -> Result<Self, ()> {
         let xscreensaver_id_str = std::env::var("XSCREENSAVER_WINDOW")
             .ok()
-            .unwrap_or(String::new())
+            .unwrap_or_default()
             .split_whitespace()
             .next()
             .unwrap_or("")
@@ -91,9 +91,9 @@ impl ScreensaverSetup {
                     width: attrs2.width,
                     verse_x: -1,
                     verse_y: -1,
-                    line_length: line_length,
+                    line_length,
                     font_size: calculated_font_size,
-                    bible_path: bible_path,
+                    bible_path,
                     duration: speed,
                 })
             }
@@ -138,9 +138,9 @@ impl ScreensaverSetup {
                     width: width as i32,
                     verse_x: -1,
                     verse_y: -1,
-                    line_length: line_length,
+                    line_length,
                     font_size: calculated_font_size,
-                    bible_path: bible_path,
+                    bible_path,
                     duration: speed,
                 })
             }
@@ -169,8 +169,6 @@ impl ScreensaverSetup {
         let mut rng = rand::rng();
         // Get a verse
         let mut e4verse = BibleVerse::new(
-            self.width,
-            self.height,
             self.line_length,
             self.bible_path.clone(),
         );
@@ -232,12 +230,12 @@ impl ScreensaverSetup {
 
             let width = extents.width as i32;
             if width > text_width {
-                text_width = width as i32;
+                text_width = width;
             }
 
             let height = extents.height as i32;
             if height > text_height {
-                text_height = height as i32;
+                text_height = height;
             }
         }
         text_height += step;
@@ -283,14 +281,12 @@ impl ScreensaverSetup {
                         e4verse.direction = direction;
                         self.verse_x = 0;
                         self.verse_y = 0;
-                    } else {
-                        if self.verse_x < 0 {
-                            self.verse_x = 0;
-                            e4verse.direction = crate::bibleverse::Direction::NorthEeast;
-                        } else if self.verse_y < 0 {
-                            self.verse_y = 0;
-                            e4verse.direction = crate::bibleverse::Direction::SouthWest;
-                        }
+                    } else if self.verse_x < 0 {
+                        self.verse_x = 0;
+                        e4verse.direction = crate::bibleverse::Direction::NorthEeast;
+                    } else if self.verse_y < 0 {
+                        self.verse_y = 0;
+                        e4verse.direction = crate::bibleverse::Direction::SouthWest;
                     }
                 }
                 crate::bibleverse::Direction::NorthEeast => {
@@ -303,14 +299,12 @@ impl ScreensaverSetup {
                         self.verse_x = self.width - text_width;
                         self.verse_y = 0;
                         e4verse.direction = direction;
-                    } else {
-                        if (self.verse_x + text_width) > self.width {
-                            self.verse_x = self.width - text_width;
-                            e4verse.direction = crate::bibleverse::Direction::NorthWest;
-                        } else if self.verse_y < 0 {
-                            self.verse_y = 0;
-                            e4verse.direction = crate::bibleverse::Direction::SouthEeast;
-                        }
+                    } else if (self.verse_x + text_width) > self.width {
+                        self.verse_x = self.width - text_width;
+                        e4verse.direction = crate::bibleverse::Direction::NorthWest;
+                    } else if self.verse_y < 0 {
+                        self.verse_y = 0;
+                        e4verse.direction = crate::bibleverse::Direction::SouthEeast;
                     }
                 }
                 crate::bibleverse::Direction::SouthEeast => {
@@ -323,14 +317,12 @@ impl ScreensaverSetup {
                         self.verse_x = self.width - text_height;
                         self.verse_y = self.height - verse_height;
                         e4verse.direction = direction;
-                    } else {
-                        if (self.verse_x + text_width) > self.width {
-                            self.verse_x = self.width - text_width;
-                            e4verse.direction = crate::bibleverse::Direction::SouthWest;
-                        } else if (self.verse_y + verse_height) > self.height {
-                            self.verse_y = self.height - verse_height;
-                            e4verse.direction = crate::bibleverse::Direction::NorthEeast;
-                        }
+                    } else if (self.verse_x + text_width) > self.width {
+                        self.verse_x = self.width - text_width;
+                        e4verse.direction = crate::bibleverse::Direction::SouthWest;
+                    } else if (self.verse_y + verse_height) > self.height {
+                        self.verse_y = self.height - verse_height;
+                        e4verse.direction = crate::bibleverse::Direction::NorthEeast;
                     }
                 }
                 crate::bibleverse::Direction::SouthWest => {
@@ -343,14 +335,12 @@ impl ScreensaverSetup {
                         self.verse_x = 0;
                         self.verse_y = self.height - verse_height;
                         e4verse.direction = direction;
-                    } else {
-                        if self.verse_x < 0 {
-                            self.verse_x = 0;
-                            e4verse.direction = crate::bibleverse::Direction::SouthEeast;
-                        } else if (self.verse_y + verse_height) > self.height {
-                            self.verse_y = self.height - verse_height;
-                            e4verse.direction = crate::bibleverse::Direction::NorthWest;
-                        }
+                    } else if self.verse_x < 0 {
+                        self.verse_x = 0;
+                        e4verse.direction = crate::bibleverse::Direction::SouthEeast;
+                    } else if (self.verse_y + verse_height) > self.height {
+                        self.verse_y = self.height - verse_height;
+                        e4verse.direction = crate::bibleverse::Direction::NorthWest;
                     }
                 }
             }

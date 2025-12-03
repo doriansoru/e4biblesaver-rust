@@ -42,29 +42,25 @@ fn main() {
     let bible_path: Option<String>;
 
     // Set default arguments if they are empty
-    if option_index_duration.is_some() {
-        let index = option_index_duration.unwrap();
+    if let Some(index) = option_index_duration {
         duration = Some(args[index + 1].parse().unwrap());
     } else {
         duration = Some(DEFAULT_DURATION);
     }
 
-    if option_index_line_length.is_some() {
-        let index = option_index_line_length.unwrap();
+    if let Some(index) = option_index_line_length {
         line_length = Some(args[index + 1].parse().unwrap());
     } else {
         line_length = Some(DEFAULT_LINE_LENGTH);
     }
 
-    if option_index_font_size.is_some() {
-        let index = option_index_font_size.unwrap();
+    if let Some(index) = option_index_font_size {
         font_size = Some(args[index + 1].parse().unwrap());
     } else {
         font_size = Some(DEFAULT_FONT_SIZE);
     }
 
-    if option_index_bible.is_some() {
-        let index = option_index_bible.unwrap();
+    if let Some(index) = option_index_bible {
         bible_path = Some(args[index + 1].parse().unwrap());
     } else {
         let mut config_bible_path = PathBuf::new();
@@ -86,7 +82,7 @@ fn main() {
             s.draw_e4verse();
         }
     } else {
-        let e4verse = BibleVerse::new(80, 30, line_length.unwrap(), String::from(""));
+        let e4verse = BibleVerse::new(line_length.unwrap(), String::from(""));
         println!("{}", e4verse);
     }
 }

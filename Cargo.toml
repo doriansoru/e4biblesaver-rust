@@ -13,7 +13,7 @@ libc = { version = "0.2", default-features = false }
 
 [package.metadata.deb]
 maintainer = "Dorian Soru <doriansoru@gmail.com>"
-copyright = "2024, Dorian Soru <doriansoru@gmail.com>"
+copyright = "2025, Dorian Soru <doriansoru@gmail.com>"
 license-file = [ "LICENSE", "0" ]
 extended-description = "A XScreenSaver module that shows a random verse from the holy Bible."
 depends = "$auto"

@@ -37,12 +37,7 @@ mod versereader {
 
 #[derive(Debug)]
 pub struct BibleVerse {
-    pub height: i32,
-    pub width: i32,
-    pub line_length: i32,
     pub verse: String,
-    pub x: i32,
-    pub y: i32,
     pub direction: Direction,
 }
 
@@ -74,21 +69,16 @@ impl From<i8> for Direction {
 }
 
 impl BibleVerse {
-    pub fn new(width: i32, height: i32, line_length: i32, bible_path: String) -> Self {
+    pub fn new(line_length: i32, bible_path: String) -> Self {
         let v = Self::new_verse(line_length, bible_path).unwrap();
 
         let index = rand::rng().random_range(0..=Direction::max());
         let direction = Direction::from(index);
-        let e4verse = Self {
-            height: height,
-            width: width,
-            line_length: line_length,
+        
+        Self {
             verse: v,
-            x: 0,
-            y: 0,
             direction,
-        };
-        e4verse
+        }
     }
 
     // Gets a random line from a file and returns as a string
@@ -119,7 +109,7 @@ impl BibleVerse {
     }
 
     fn new_verse(line_length: i32, bible_path: String) -> Result<String, Error> {
-        const BIBLE_SEPARATOR: &'static str = "|";
+        const BIBLE_SEPARATOR: &str = "|";
 
         //Select a random verse
         let verse = Self::get_random_line(&bible_path);
